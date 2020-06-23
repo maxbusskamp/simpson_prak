@@ -1,0 +1,47 @@
+global auto_path
+lappend auto_path /Library/Tcl
+
+spinsys {
+    channels 2H
+    nuclei 2H
+}
+
+par {
+    gamma_angles      4
+    spin_rate         20000
+    np                24
+    crystal_file      rep10
+    start_operator    I1m
+    detect_operator   I1z
+    proton_frequency  400e6
+    variable rf       20000
+    variable ival     0.5
+    variable verb     1
+    verbose           0000
+}
+
+proc pulseq {} {
+    global par
+    lappend ::auto_path /usr/local/tcl
+    if {![namespace exists mmatrix]} {
+	package require mmatrix
+	namespace import mmatrix::*
+    }
+    set start [matrix get start]
+    puts "start operator:"
+    mputmatrix $start re "%9.7f"
+    puts ""
+    #    exit
+    set test [mgetmatrix 1 Im]
+    mputmatrix $test re "%9.7f"
+#    exit
+    set t [msub $start $test]
+    mputmatrix $t re
+    exit
+}
+
+proc main {} {
+    
+    
+    set f [fsimpson]
+}

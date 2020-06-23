@@ -1,0 +1,2 @@
+sudo mkdir -p /usr/local/tcl/mmatrix
+sudo cp mmatrix.tcl pkgIndex.tcl /usr/local/tcl/mmatrix/

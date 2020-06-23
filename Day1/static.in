@@ -1,0 +1,48 @@
+spinsys {
+	channels 19F
+	nuclei 19F
+	shift 1 0 -10p 0.3 0 0 0
+}
+
+par {
+	crystal_file  	alpha0beta0
+	# crystal_file  	rep10
+	# crystal_file  	rep30
+	# crystal_file  	rep100
+	# crystal_file  	rep2000
+	# crystal_file		zcw75024.cry
+   
+	method				direct 
+	proton_frequency 	400.0e6
+	
+	# What does the choice of these two operators mean? 
+	start_operator   	I1x
+	detect_operator  	I1p
+  
+	sw             		20000
+	variable tsw     	1.0e6/sw
+	np               	4096
+  
+	spin_rate       	0
+	gamma_angles   		1
+	verbose         	0100
+}
+
+proc pulseq {} {
+	global par
+  
+	acq_block {
+		delay $par(tsw)
+	}
+}
+
+proc main {} {
+	global par
+
+	set f [fsimpson]
+	faddlb $f 50 0
+	fft $f
+	fsave $f $par(crystal_file).spe
+	fsave $f $par(crystal_file).xy -xreim
+	funload $f
+}

@@ -1,0 +1,43 @@
+spinsys {
+    nuclei 27Al
+    channels 27Al
+    quadrupole 1 2 5.0e6 0.0 0 0 0
+}
+
+par {
+	crystal_file     	rep2000
+	
+	method           	gcompute 
+	proton_frequency 	400.0e6
+	
+	start_operator   	I1x
+	detect_operator  	I1p
+
+	spin_rate        	25000
+	gamma_angles     	200
+	verbose          	0100
+
+	sw					spin_rate*gamma_angles
+	variable tsw		1.0e6/sw
+	np               	8192
+}
+
+proc pulseq {} {
+	global par
+  
+	acq_block { 
+		delay $par(tsw)
+	}
+}
+
+proc main {} {
+	global par
+  
+  	set f [fsimpson]
+	faddlb $f 500 0
+	fzerofill $f [expr 4*$par(np)]
+	fft $f
+	fsave $f $par(crystal_file).spe
+	# fsave $f $par(crystal_file).xy -xreim
+	funload $f
+}

@@ -1,0 +1,59 @@
+spinsys {
+    channels 11B
+    nuclei 11B
+    quadrupole 1 2 2.0e6 0 0 0 0
+}
+
+par {
+	crystal_file      	rep2000
+	
+	method          	gcompute   
+	proton_frequency 	400.0e6 
+	
+	start_operator  	I1z
+	
+    spin_rate        	10000
+	gamma_angles      	200
+	verbose         	0100
+
+	sw              	spin_rate*gamma_angles
+	variable tsw    	1e6/sw 
+	
+	#Set np according to maximum pulse length to be investigated (tsw*np)
+	np					20
+}
+
+proc pulseq {} {
+    global par
+    matrix set detect coherence {3}
+	reset 
+	acq_block { 
+       pulse $par(tsw) $par(rf) -y
+	}
+}
+
+proc main {} {
+    global par
+
+	# select v_rf (in Hz)
+    set par(rf) 	25.0e3
+ 
+    # set scaling factor according to matrix dimension (4/matrixdim)
+    # matrixdim: (2I+1)
+    set sf 		[expr 4.0/6.0]
+
+    # make simulation
+    set f [fsimpson]
+    
+    # extract data
+    set fileID [open rf$par(rf)Hz.out w]
+    puts $fileID "# Pulselength (in us) Re Im Abs"
+    for {set i 1} {$i <= $par(np)} {incr i} {
+		set re [findex $f $i -re]
+		set im [findex $f $i -im]
+		set abs [expr sqrt($re*$re+$im*$im)]
+		puts $fileID "[expr ($i-1)*$par(tsw)] [expr $abs*$sf]"
+		flush $fileID
+    }
+    funload $f
+}

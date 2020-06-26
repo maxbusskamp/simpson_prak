@@ -1,0 +1,43 @@
+spinsys {
+	channels 19F 
+	nuclei 19F
+	shift 1 0p -10p 0.3 0 0 0
+}
+
+par {
+	crystal_file    	rep168
+  
+	method           	direct 
+	proton_frequency 	400e6
+	
+	start_operator   	I1x
+	detect_operator  	I1p
+ 
+	sw             		20000
+	variable tsw		1e6/sw
+	np             		4096
+
+	# rotor_angle    		55
+	spin_rate  			1000
+	gamma_angles  		16
+	verbose				0100
+}
+
+proc pulseq {} {
+	global par
+  
+	acq_block {
+		delay $par(tsw)
+	}  
+}
+
+proc main {} {
+	global par
+   
+	set f [fsimpson]
+	faddlb $f 50 0
+	fft $f
+	fsave $f $par(spin_rate)_$par(gamma_angles).spe
+	fsave $f $par(spin_rate)_$par(gamma_angles).xy -xreim
+	funload $f
+}

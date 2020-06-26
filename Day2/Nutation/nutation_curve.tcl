@@ -6,7 +6,7 @@ spinsys {
 
 par {
     # we can set an arbitrary RF field
-    variable rf       20e3
+    variable rf       50e3
     # and choose to increment the pulse duration by this amount in µs
     variable nutation_increment 1
     proton_frequency  300e6
@@ -15,7 +15,7 @@ par {
     spin_rate         10000
     gamma_angles      40
     sw                1e6/nutation_increment
-    np                26
+    np                100
     start_operator    I1z
     detect_operator   I1p
     num_cores         64
@@ -38,6 +38,6 @@ proc main {} {
     global par
     # make simulation
     set f [fsimpson]
-    fsave $f nutation.dat -xreim
+    fsave $f nutation_rf_$par(rf).dat -xreim
     funload $f
 }

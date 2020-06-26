@@ -1,0 +1,43 @@
+spinsys {
+     nuclei 11B
+     channels 11B
+     quadrupole 1 2 0.5e6 0.0 0 0 0
+}
+
+par {
+	#crystal_file    	alpha0beta0
+	crystal_file    	zcw75024
+	
+	method          	direct
+	proton_frequency	400.0e6
+	
+	start_operator  	I1x
+	detect_operator   	I1p
+	
+	sw              	1.0e6
+	variable tsw    	1e6/sw
+	np              	8192
+	
+	spin_rate       	0
+	gamma_angles    	1
+	verbose         	0100
+}
+
+proc pulseq {} {
+	global par
+  
+	acq_block { 
+		delay $par(tsw)
+	}
+}
+
+proc main {} {
+	global par
+  
+  	set f [fsimpson]
+	faddlb $f 2000 0
+	fft $f
+	fsave $f $par(crystal_file).spe
+	fsave $f $par(crystal_file).xy -xreim
+	funload $f
+}

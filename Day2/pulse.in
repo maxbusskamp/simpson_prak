@@ -10,7 +10,7 @@ par {
 	method           	direct 
 	proton_frequency 	400e6
 	
-	start_operator   	I1x
+	start_operator   	I1z
 	detect_operator  	I1p
  
 	sw             		20000
